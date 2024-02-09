@@ -149,7 +149,7 @@ public class Model extends Observable {
             } else {
                 rowState[i] = 0;
             }
-        }a
+        }
     }
 
     public void rowStateUpdate(int col, int[] rowState) {
