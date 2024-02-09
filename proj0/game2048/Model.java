@@ -110,9 +110,24 @@ public class Model extends Observable {
         boolean changed;
         changed = false;
 
-        // TODO: Modify this.board (and perhaps this.score) to account
-        // for the tilt to the Side SIDE. If the board changed, set the
-        // changed local variable to true.
+        board.setViewingPerspective(side);
+
+        for (int col = 0; col < 4; col++) {
+            if (rowArrange(col)) {
+                changed = true;
+            }
+        }
+        board.setViewingPerspective(Side.NORTH);
+//        for(int col =0; col < board.size(); col++){
+//            for(int row = 0; row < board.size(); row++){
+//                Tile t = board.tile(col, row);
+//                if(t != null){
+//                    board.move(col, 3, t);
+//                    changed = true;
+//                    score += 7;
+//                }
+//            }
+//        }
 
         checkGameOver();
         if (changed) {
@@ -120,6 +135,123 @@ public class Model extends Observable {
         }
         return changed;
     }
+
+    public boolean rowArrange(int col) {
+        int[] rowState = new int[4];
+        rowStateInit(col, rowState);
+        return selectTile(col, rowState);
+    }
+
+    public void rowStateInit(int col, int[] rowState) {
+        for (int i = 0; i < 4; i++) {
+            if (this.board.tile(col, i) != null) {
+                rowState[i] = this.board.tile(col, i).value();
+            } else {
+                rowState[i] = 0;
+            }
+        }a
+    }
+
+    public void rowStateUpdate(int col, int[] rowState) {
+        for (int i = 0; i < 4; i++) {
+            if (this.board.tile(col, i) != null) {
+                rowState[i] = this.board.tile(col, i).value();
+            } else if (rowState[i] != -1) {
+                rowState[i] = 0;
+            }
+        }
+    }
+
+    public boolean selectTile(int col, int[] rowState) {
+        boolean changed = false;
+        for (int row = 2; row >= 0; row--) {
+            if (this.board.tile(col, row) != null) {
+                if (rowMove(col, row, rowState)) {
+                    changed = true;
+                }
+            }
+        }
+        return changed;
+    }
+
+    public boolean rowMove(int col, int row, int[] rowState) {
+        boolean changed = false;
+        int moveToRow = rowMoveCalculate(col, row, rowState);
+        if (row != moveToRow) {
+            changed = true;
+            this.board.move(col, moveToRow, this.board.tile(col, row));
+            rowStateUpdate(col, rowState);
+        }
+        return changed;
+    }
+
+    public int rowMoveCalculate(int col, int row, int[] rowState) {
+        int pointer = row;
+        int value = board.tile(col, row).value();
+        for (int i = pointer + 1; i < 4; i++) {
+            if (rowState[i] == 0) {
+                pointer = i;
+            } else if (rowState[i] == value) {
+                pointer = i;
+                this.score += rowState[i] * 2;
+                rowState[i - 1] = -1;
+                break;
+            } else if (rowState[i] == -1) {
+                pointer = i;
+                break;
+            } else {
+                break;
+            }
+        }
+        return pointer;
+    }
+
+//        for(int i = 3; i > row; i--){
+//            if (rowState[i] == 0) {
+//                if (i != 3) {
+//                    if (mergeCheck(i, rowState)) {
+//                        rowState[i + 1] = rowState[i + 1] * 2;
+//                        this.board.move(col, i + 1, this.board.tile(col, row));
+//                        rowState[row] = 0;
+//                        this.score += rowState[i];
+//                        rowState[i + 1] = -1;
+//                        break;
+//                    } else {
+//                        rowState[i] = this.board.tile(col, row).value();
+////                        System.out.println("value is" + this.board.tile(col, row).value());
+//                        this.board.move(col, i, this.board.tile(col, row));
+//                        rowState[row] = 0;
+//                        break;
+//                    }
+//                } else {
+//                    rowState[i] = this.board.tile(col, row).value();
+//                    this.board.move(col, i, this.board.tile(col, row));
+//                    rowState[row] = 0;
+//                    break;
+//                }
+//            } else if (rowState[i] == -1) {
+//                continue;
+//            } else if (rowState[i] == this.board.tile(col, row).value()){
+//                rowState[i] = rowState[i] * 2;
+//                this.score += rowState[i];
+//                rowState[i] = -1;
+//                this.board.move(col, i, this.board.tile(col, row));
+//                rowState[row] = 0;
+//                break;
+//            }else {
+//                changed = false;
+//            }
+//        }
+//        return changed;
+//    }
+//
+//    public boolean mergeCheck(int currentRow, int[] rowState){
+//        if(rowState[currentRow + 1] == rowState[currentRow]){
+//            return true;
+//        }else{
+//            return false;
+//        }
+//    }
 
     /** Checks if the game is over and sets the gameOver variable
      *  appropriately.
@@ -137,7 +269,14 @@ public class Model extends Observable {
      *  Empty spaces are stored as null.
      * */
     public static boolean emptySpaceExists(Board b) {
-        // TODO: Fill in this function.
+        int size = b.size();
+        for(int i = 0; i < size; i++){
+            for(int j = 0; j < size; j++){
+                if(b.tile(i, j) == null){
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -147,7 +286,14 @@ public class Model extends Observable {
      * given a Tile object t, we get its value with t.value().
      */
     public static boolean maxTileExists(Board b) {
-        // TODO: Fill in this function.
+        int size = b.size();
+        for(int i = 0; i < size; i++){
+            for(int j = 0; j < size; j++){
+                if(b.tile(i, j)!= null && b.tile(i, j).value() == MAX_PIECE){
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -158,8 +304,35 @@ public class Model extends Observable {
      * 2. There are two adjacent tiles with the same value.
      */
     public static boolean atLeastOneMoveExists(Board b) {
-        // TODO: Fill in this function.
+        if(emptySpaceExists(b)){
+            return true;
+        }else{
+            int size = b.size();
+            for(int i = 0; i < size; i++){
+                for(int j = 0; j < size; j++){
+                    if(equalValueExist(b, i, j)){
+                        return true;
+                    }
+                }
+            }
+        }
         return false;
+    }
+
+    public static boolean equalValueExist(Board b, int col, int row){
+        int size = b.size();
+        int value = b.tile(col, row).value();
+        if(col + 1 < size && b.tile(col + 1, row).value() == value){
+            return true;
+        }else if(col - 1 > 0 && b.tile(col - 1, row).value() == value){
+            return true;
+        }else if(row + 1 < size && b.tile(col, row + 1).value() == value){
+            return true;
+        }else if(row - 1 > 0 && b.tile(col, row - 1).value() == value){
+            return true;
+        }else{
+            return false;
+        }
     }
 
 
