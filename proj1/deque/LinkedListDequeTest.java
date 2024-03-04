@@ -1,6 +1,9 @@
 package deque;
 
 import org.junit.Test;
+
+import java.util.Iterator;
+
 import static org.junit.Assert.*;
 
 
@@ -159,6 +162,82 @@ public class LinkedListDequeTest {
         //System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
         LinkedListDeque<Integer> lld1 = new LinkedListDeque<Integer>(1);
         lld1.printDeque();
-        lld1.get(0);
+        int n = lld1.get(0);
+        assertEquals(1, n);
+        //assertEquals(2, lld1.get(0));
+    }
+
+    @Test
+    /* Add large number of elements to deque; check if order is correct. */
+    public void LLDequeIteration() {
+        //System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
+        LinkedListDeque<Integer> lld = new LinkedListDeque<>();
+        lld.addFirst(1);
+        lld.addFirst(2);
+        lld.addLast(3);
+        lld.printDeque();
+        for(int i : lld) {
+            System.out.println(i + " ");
+        }
+    }
+
+    @Test
+    /* Add large number of elements to deque; check if order is correct. */
+    public void LLDequeEqual() {
+        //System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
+        LinkedListDeque<Integer> lld = new LinkedListDeque<>();
+        LinkedListDeque<Integer> lld2 = new LinkedListDeque<>();
+        lld.addFirst(1);
+        lld.addFirst(2);
+        lld.addLast(3);
+        assertFalse(lld.equals(lld2));
+        lld2.addLast(2);
+        lld2.addLast(1);
+        lld2.addLast(3);
+        assertTrue(lld.equals(lld2));
+
+    }
+
+    @Test
+    public void addFirstArrayDeque() {
+        ArrayDeque<Integer> ad = new ArrayDeque<>();
+        assertTrue(ad.isEmpty());
+        for (int i = 0; i < 10; i++) {
+            ad.addFirst(i);
+        }
+        assertEquals(10, ad.size());
+        assertFalse(ad.isEmpty());
+        ad.printDeque();
+        assertEquals(9, (int) ad.removeFirst());
+    }
+    @Test
+    public void addLastArrayDeque() {
+        ArrayDeque<Integer> ad = new ArrayDeque<>();
+
+        for (int i = 0; i < 100; i++) {
+            ad.addLast(i);
+        }
+        assertEquals(100, ad.size());
+        //assertEquals(99, (int) ad.removeLast());
+        for (int i = 0; i < 100; i++) {
+            assertEquals(i, (int) ad.get(i));
+        }
+
+    }
+    @Test
+    public void iteratorArrayDeque() {
+        ArrayDeque<Integer> ad = new ArrayDeque<>();
+        for (int i = 0; i < 10; i++) {
+            ad.addLast(i);
+        }
+
+        Iterator<Integer> it = ad.iterator();
+        assertEquals(0, (int) it.next());
+
+        for (int e: ad) {
+            System.out.println(e + " ");
+        }
+        ad.printDeque();
+        //assertEquals(99, (int) ad.removeLast());
     }
 }

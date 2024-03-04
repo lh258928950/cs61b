@@ -1,6 +1,9 @@
 package deque;
 
-public class LinkedListDeque<T> {
+import java.util.Iterator;
+
+
+public class LinkedListDeque<T> implements Iterable<T>{
     int size;
     Node sentinel;
     public LinkedListDeque() {
@@ -20,10 +23,10 @@ public class LinkedListDeque<T> {
             sentinel.prev = first;
             first.prev = sentinel;
         }else {
-            sentinel.next.prev = first;
-            sentinel.next = first;
             first.next = sentinel.next;
             first.prev = sentinel;
+            sentinel.next.prev = first;
+            sentinel.next = first;
         }
         size = size + 1;
     }
@@ -59,30 +62,101 @@ public class LinkedListDeque<T> {
         System.out.println();
     }
     public T removeFirst() {
-        if (sentinel.next != null) {
+        if (sentinel.next != null && sentinel.next != sentinel) {
             Node first = sentinel.next;
-            sentinel.next = first.next;
+            T item = first.item;
+            if (size == 1){
+                sentinel.next = sentinel;
+                sentinel.prev = sentinel;
+            }else {
+                sentinel.next = first.next;
+                first.next.prev = sentinel;
+            }
+            first.next = null;
+            first.prev = null;
+            first.item = null;
             size = size - 1;
-            return first.item;
+            return item;
         }
         return null;
-
     }
     public T removeLast(){
-        if (sentinel.next != null) {
-            Node Last = sentinel.prev;
-            sentinel.prev = sentinel.prev.prev;
-            sentinel.prev.next = null;
-            Last.prev = null;
+        if (sentinel.prev != null && sentinel.prev != sentinel) {
+            Node last = sentinel.prev;
+            T item = last.item;
+            if (size == 1) {
+                sentinel.next = sentinel;
+                sentinel.prev = sentinel;
+            } else {
+                sentinel.prev = last.prev;
+                sentinel.prev.next = sentinel;
+            }
+            last.item = null;
+            last.next = null;
+            last.prev = null;
             size = size - 1;
-            return Last.item;
+            return item;
         }
         return null;
     }
     public T get(int index) {
-        return sentinel.get(size);
+        return sentinel.get(index);
     }
 
+    public T getRecursive(int index) {
+        if (index < 0 || index >= size) {
+            return null;
+        }
+        return getRecursiveHelper(sentinel.next, index);
+    }
+    public T getRecursiveHelper(Node current, int index) {
+        if (index == 0) {
+            return current.item;
+        } else {
+            return getRecursiveHelper(current.next, index - 1);
+        }
+    }
+    @Override
+    public boolean equals(Object o){
+        if (o instanceof LinkedListDeque){
+            if (size != ((LinkedListDeque<T>) o).size) {
+                return false;
+            }
+            Iterator<T> iterator = iterator();
+            for (T item : (LinkedListDeque<T>) o){
+                if (item != iterator.next()){
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+    public Iterator<T> iterator(){
+        return new LLDIterator();
+    }
+
+    public class LLDIterator implements Iterator<T> {
+        int pos;
+        Node nextNode;
+
+        public LLDIterator() {
+            pos = 0;
+            nextNode = sentinel.next;
+        }
+        @Override
+        public boolean hasNext() {
+            return pos < size;
+        }
+
+        @Override
+        public T next() {
+            T item = nextNode.item;
+            nextNode = nextNode.next;
+            pos = pos + 1;
+            return item;
+        }
+    }
     public class Node {
         T item;
         Node next;
@@ -106,7 +180,7 @@ public class LinkedListDeque<T> {
                 temp = temp.next;
                 index = index - 1;
             }
-            return temp;
+            return temp.next;
         }
     }
 }
