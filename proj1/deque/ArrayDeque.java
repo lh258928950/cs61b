@@ -65,6 +65,7 @@ public class ArrayDeque<T> implements Iterable<T> {
         T first = items[head];
         items[head] = null;
         size = size - 1;
+        checkResize();
         return first;
     }
 
@@ -74,6 +75,7 @@ public class ArrayDeque<T> implements Iterable<T> {
         T last = items[tail];
         items[tail] = null;
         size = size - 1;
+        checkResize();
         return last;
     }
 
@@ -84,6 +86,9 @@ public class ArrayDeque<T> implements Iterable<T> {
         return items[(head + index + 1) % items.length];
     }
 
+    public Iterator<T> iterator() {
+        return new AdIterator();
+    }
     public class AdIterator implements Iterator<T> {
         int pos;
 
@@ -104,7 +109,38 @@ public class ArrayDeque<T> implements Iterable<T> {
         }
     }
 
-    public Iterator<T> iterator() {
-        return new AdIterator();
+    public boolean equals(Object o) {
+        if (o instanceof ArrayDeque){
+            if (size != ((ArrayDeque<T>) o).size) {
+                return false;
+            }
+            Iterator<T> iterator = iterator();
+            for (T item : (ArrayDeque<T>) o){
+                if (item != iterator.next()){
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private void checkResize() {
+        if (items.length >= 16 && items.length / 4 > size){
+            resize();
+        }
+    }
+    private void resize() {
+        int length = items.length / 2;
+        if (length < 16){
+            length = 16;
+        }
+        T[] array = (T[]) new Object[length];
+        for (int i = 0; i < size; i++) {
+            array[i] = items[(head + 1 + i) % items.length];
+        }
+        head = (-1 + array.length) % array.length;
+        tail = size;
+        items = array;
     }
 }

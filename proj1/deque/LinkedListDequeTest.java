@@ -1,7 +1,9 @@
 package deque;
 
+import edu.princeton.cs.algs4.StdRandom;
 import org.junit.Test;
 
+import java.util.Comparator;
 import java.util.Iterator;
 
 import static org.junit.Assert.*;
@@ -235,9 +237,128 @@ public class LinkedListDequeTest {
         assertEquals(0, (int) it.next());
 
         for (int e: ad) {
-            System.out.println(e + " ");
+            System.out.print(e + " ");
         }
-        ad.printDeque();
+        //ad.printDeque();
         //assertEquals(99, (int) ad.removeLast());
     }
+    @Test
+    public void equalArrayDeque() {
+        ArrayDeque<Integer> ad = new ArrayDeque<>();
+        ArrayDeque<Integer> ad2 = new ArrayDeque<>();
+        for (int i = 0; i < 10; i++) {
+            ad.addLast(i);
+        }
+        for (int i = 0; i < 10; i++) {
+            ad2.addLast(i);
+        }
+        assertTrue(ad.equals(ad2));
+        ad2.removeLast();
+        assertFalse(ad.equals(ad2));
+    }
+    @Test
+    public void resizeArrayDeque() {
+        ArrayDeque<Integer> ad = new ArrayDeque<>();
+        for (int i = 0; i < 100; i++) {
+            ad.addFirst(i);
+        }
+        for (int i = 0; i < 80; i++) {
+            ad.removeLast();
+        }
+        //assertEquals(1, ad.size());
+        assertEquals(99, (int) ad.get(0));
+    }
+
+    @Test
+    public void randomizedArrayDeque() {
+        ArrayDeque<Integer> AD = new ArrayDeque<>();
+        LinkedListDeque<Integer> LD = new LinkedListDeque<>();
+        int N = 5000;
+        for (int i = 0; i < N; i += 1) {
+            int operationNumber = StdRandom.uniform(0, 6);
+            if (operationNumber == 0) {
+                // addLast
+                int randVal = StdRandom.uniform(0, 100);
+                AD.addLast(randVal);
+                LD.addLast(randVal);
+                System.out.println("addLast(" + randVal + ")");
+            } else if (operationNumber == 1) {
+                // size
+                int size = AD.size();
+                int size2 = LD.size();
+                assertEquals(size, size2);
+                System.out.println("size: " + size);
+            } else if (operationNumber == 2 && !AD.isEmpty()) {
+                // removeLast
+                int last = AD.removeLast();
+                int last2 = LD.removeLast();
+                assertEquals(last, last2);
+                System.out.println("last: " + last);
+            } else if (operationNumber == 3 && !LD.isEmpty()) {
+                // removeFirst
+                int first = AD.removeFirst();
+                int first2 = LD.removeFirst();
+                assertEquals(first, first2);
+                System.out.println("first: " + first);
+            } else if (operationNumber == 4) {
+                // addLast
+                int randVal = StdRandom.uniform(0, 100);
+                AD.addFirst(randVal);
+                LD.addFirst(randVal);
+                System.out.println("addFirst(" + randVal + ")");
+            } else if (operationNumber == 5 && !LD.isEmpty()) {
+                // get
+                int randIndex = StdRandom.uniform(0, AD.size());
+                int adVal = AD.get(randIndex);
+                int ldVal = LD.get(randIndex);
+                assertEquals(adVal, ldVal);
+                System.out.println("get: " + randIndex + " " + adVal +  " " + ldVal);
+            }
+        }
+    }
+
+    @Test
+    public void maxArrayDeque() {
+        Comparator<String> stringLengthComparator = new Comparator<String>() {
+            @Override
+            public int compare(String s1, String s2) {
+                return Integer.compare(s1.length(), s2.length());
+            }
+        };
+        MaxArrayDeque<String> ad = new MaxArrayDeque<>(stringLengthComparator);
+        for (int i = 0; i < 10; i++) {
+            String content = "";
+            for (int j = 0; j < i; j++){
+                content = content.concat("a");
+            }
+            ad.addFirst(content);
+        }
+        assertEquals("aaaaaaaaa", ad.max());
+        //assertEquals(99, (int) ad.get(0));
+    }
+
+/*    @Test
+    public void timeArrayDeque() {
+        ArrayDeque<Integer> ad = new ArrayDeque<>();
+        int n = 10000;
+        long[] times = new long[n];
+        for (int i = 0; i < n; i++) {
+            long statTime = System.nanoTime();
+            ad.addFirst(i);
+            long endTime = System.nanoTime();
+            times[i] = endTime - statTime;
+        }
+
+        long averageTime = 0;
+        for (long time : times) {
+            averageTime += time;
+        }
+        averageTime /= n;
+
+        long varianceThreshold = 2000;
+        for (long time : times) {
+            assertTrue(Math.abs(time - averageTime) < varianceThreshold);
+        }
+    }// not good*/
+
 }
