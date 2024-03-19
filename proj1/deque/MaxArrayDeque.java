@@ -7,6 +7,11 @@ public class MaxArrayDeque<T> extends ArrayDeque<T>{
     public MaxArrayDeque(Comparator<T> c) {
         comparator = c;
     }
+
+    public MaxArrayDeque() {
+
+    }
+
     public T max() {
         if (size == 0) {
             return null;

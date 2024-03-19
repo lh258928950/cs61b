@@ -3,7 +3,7 @@ package deque;
 import java.util.Iterator;
 
 
-public class LinkedListDeque<T> implements Iterable<T>{
+public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
     int size;
     Node sentinel;
     public LinkedListDeque() {
@@ -16,6 +16,7 @@ public class LinkedListDeque<T> implements Iterable<T>{
         sentinel.next = new Node(item);
         sentinel.prev = sentinel.getNode(size);
     }
+    @Override
     public void addFirst(T item) {
         Node first = new Node(item);
         if(size == 0){
@@ -30,6 +31,7 @@ public class LinkedListDeque<T> implements Iterable<T>{
         }
         size = size + 1;
     }
+    @Override
     public void addLast(T item) {
         Node addNote = new Node(item);
         if (sentinel.prev == null){
@@ -43,16 +45,19 @@ public class LinkedListDeque<T> implements Iterable<T>{
         }
         size = size + 1;
     }
-    public boolean isEmpty() {
-        if (size == 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+//    @Override
+//    public boolean isEmpty() {
+//        if (size == 0) {
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
+    @Override
     public int size() {
         return size;
     }
+    @Override
     public void printDeque(){
         Node p = sentinel.next;
         while (p != null) {
@@ -61,6 +66,7 @@ public class LinkedListDeque<T> implements Iterable<T>{
         }
         System.out.println();
     }
+    @Override
     public T removeFirst() {
         if (sentinel.next != null && sentinel.next != sentinel) {
             Node first = sentinel.next;
@@ -80,6 +86,7 @@ public class LinkedListDeque<T> implements Iterable<T>{
         }
         return null;
     }
+    @Override
     public T removeLast(){
         if (sentinel.prev != null && sentinel.prev != sentinel) {
             Node last = sentinel.prev;
@@ -99,6 +106,7 @@ public class LinkedListDeque<T> implements Iterable<T>{
         }
         return null;
     }
+    @Override
     public T get(int index) {
         return sentinel.get(index);
     }

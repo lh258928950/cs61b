@@ -114,8 +114,8 @@ public class LinkedListDequeTest {
 
         boolean passed1 = false;
         boolean passed2 = false;
-        assertEquals("Should return null when removeFirst is called on an empty Deque,", null, lld1.removeFirst());
-        assertEquals("Should return null when removeLast is called on an empty Deque,", null, lld1.removeLast());
+        assertEquals("Should return null when removeFirst is called on an empty deque.Deque,", null, lld1.removeFirst());
+        assertEquals("Should return null when removeLast is called on an empty deque.Deque,", null, lld1.removeLast());
 
 
     }
@@ -336,6 +336,28 @@ public class LinkedListDequeTest {
         assertEquals("aaaaaaaaa", ad.max());
         //assertEquals(99, (int) ad.get(0));
     }
+
+    @Test
+    public void maxArrayDeque2() {
+
+        MaxArrayDeque<String> ad = new MaxArrayDeque<>();
+        for (int i = 0; i < 10; i++) {
+            String content = "";
+            for (int j = 0; j < i; j++){
+                content = content.concat("a");
+            }
+            ad.addFirst(content);
+        }
+        Comparator<String> stringLengthComparator = new Comparator<String>() {
+            @Override
+            public int compare(String s1, String s2) {
+                return Integer.compare(s1.length(), s2.length());
+            }
+        };
+        assertEquals("aaaaaaaaa", ad.max(stringLengthComparator));
+        //assertEquals(99, (int) ad.get(0));
+    }
+
 
 /*    @Test
     public void timeArrayDeque() {

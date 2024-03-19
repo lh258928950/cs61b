@@ -3,7 +3,7 @@ package deque;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class ArrayDeque<T> implements Iterable<T> {
+public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     T[] items;
     int size;
     int head;
@@ -25,6 +25,7 @@ public class ArrayDeque<T> implements Iterable<T> {
         tail = head + items.length;
         items = array;
     }
+    @Override
     public void addFirst(T item) {
         if (head == tail){
             grow();
@@ -33,7 +34,7 @@ public class ArrayDeque<T> implements Iterable<T> {
         head = (head - 1 + items.length) % items.length;
         size = size + 1;
     }
-
+    @Override
     public void addLast(T item) {
         if (head == tail){
             grow();
@@ -42,15 +43,15 @@ public class ArrayDeque<T> implements Iterable<T> {
         tail = (tail + 1 + items.length) % items.length;
         size = size + 1;
     }
-
-    public boolean isEmpty() {
-        return size == 0;
-    }
-
+//    @Override
+//    public boolean isEmpty() {
+//        return size == 0;
+//    }
+    @Override
     public int size() {
         return size;
     }
-
+    @Override
     public void printDeque() {
         for (int i = 0; i < size; i++) {
             System.out.print(items[(head + 1 + i + items.length) % items.length]);
@@ -58,7 +59,7 @@ public class ArrayDeque<T> implements Iterable<T> {
         }
         System.out.println();
     }
-
+    @Override
     public T removeFirst() {
         if (size == 0) return null;
         head = (head + 1) % items.length;
@@ -68,7 +69,7 @@ public class ArrayDeque<T> implements Iterable<T> {
         checkResize();
         return first;
     }
-
+    @Override
     public T removeLast() {
         if (size == 0) return null;
         tail = (tail - 1 + items.length) % items.length;
@@ -78,7 +79,7 @@ public class ArrayDeque<T> implements Iterable<T> {
         checkResize();
         return last;
     }
-
+    @Override
     public T get(int index) {
         if (index > size || size == 0) {
             return null;
